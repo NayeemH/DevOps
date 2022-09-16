@@ -1,0 +1,37 @@
+logLevel: error
+logFormat: json
+trottlePeriod: 6
+route:
+  routes:
+    - drop:
+        - namespace: "elastic-system"
+        - type: "Normal"
+      match:
+        - receiver: "alerts"
+receivers:
+- name: "alerts"
+  webhook:
+    endpoint: "http://event-monitor.myecohub.ch/errors"
+    headers:
+      User-Agent: kube-event-exporter 1.0
+podSecurityContext:
+  enabled: true
+  fsGroup: 1001
+
+containerSecurityContext:
+  enabled: true
+  capabilities:
+    add: []
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1001
+      
+resources:
+  limits: 
+    cpu: 150m
+    memory: 250Mi
+  requests: 
+    cpu: 70m
+    memory: 150Mi
